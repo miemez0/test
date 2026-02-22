@@ -1,0 +1,705 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@miemez</title>
+
+    <link rel="icon" href="https://assets.guns.lol/favicon/apple-touch-icon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Onest', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: '#ffffff',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        * {
+            cursor: url('https://r2.guns.lol/54028d9d-9a4d-49c3-b07f-4eae3c0f498e.webp') 16 16, auto !important;
+            user-select: none; 
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        #bg-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://r2.guns.lol/195518f9-a7d9-4446-bc08-1934db03efb2.jpg');
+            background-size: cover;
+            background-position: center;
+            z-index: 0;
+            filter: grayscale(100%) blur(2px); 
+            transform: scale(1.05); 
+        }
+
+        .glass-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.2); 
+            backdrop-filter: blur(5px); 
+            -webkit-backdrop-filter: blur(5px);
+            z-index: 1;
+        }
+
+        #enter-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            z-index: 50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease-in-out, visibility 0.8s;
+        }
+
+            #enter-screen.hidden {
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+            }
+
+        .enter-text {
+            font-size: 30px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        #main-content {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 1s ease-out, transform 1s ease-out;
+        }
+
+            #main-content.visible {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+        .profile-card {
+            width: 100%;
+            max-width: 44rem;
+            padding: 26px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            transform-style: preserve-3d; 
+            will-change: transform;
+        }
+
+        .avatar-container {
+            position: relative;
+        }
+
+        .avatar {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(255, 255, 255, 0);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .glass-card {
+            background: rgba(20, 20, 20, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 16px;
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.15), 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        .text-glow {
+            text-shadow: 0px 0px 16.5px #ffffff;
+        }
+
+        .icon-glow-1 {
+            filter: drop-shadow(0 0 10px rgba(180, 180, 180, 0.6));
+            transition: transform 0.2s, filter 0.2s;
+        }
+
+        .icon-glow-2 {
+            filter: drop-shadow(0 0 10px rgba(180, 180, 180, 0.6));
+            transition: transform 0.2s, filter 0.2s;
+        }
+
+        .icon-glow-default {
+            filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.8));
+            transition: transform 0.2s, filter 0.2s;
+        }
+
+        .social-icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+
+            .social-icon:hover {
+                transform: translateY(-3px) scale(1.15);
+                filter: brightness(1.2) drop-shadow(0 0 15px rgba(255, 255, 255, 1));
+            }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+
+            input[type=range]::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                height: 12px;
+                width: 12px;
+                border-radius: 50%;
+                background: #ffffff;
+                cursor: inherit;
+                margin-top: -4px;
+                box-shadow: 0 0 10px rgba(255,255,255,0.5);
+            }
+
+            input[type=range]::-webkit-slider-runnable-track {
+                width: 100%;
+                height: 4px;
+                cursor: inherit;
+                background: rgba(255, 255, 255, 0.3);
+                border-radius: 2px;
+            }
+
+        .tooltip {
+            visibility: hidden;
+            background-color: rgba(20, 20, 20, 0.8);
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+            white-space: nowrap;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .tooltip-container:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="enter-screen">
+        <div class="enter-text">[ click ]</div>
+    </div>
+
+    <canvas id="cursor-particles" class="fixed top-0 left-0 w-full h-full pointer-events-none z-[100]"></canvas>
+
+    <div id="bg-image"></div>
+    <div class="glass-overlay"></div>
+
+    <audio id="bg-music" loop>
+        <source src="https://r2.guns.lol/33f7515c-5a56-41ae-a996-2a6311bfa0b3.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="main-content" class="w-full h-full flex flex-col justify-center items-center relative p-4">
+
+        <div class="absolute top-6 left-6 z-20 group flex items-center bg-black/20 hover:bg-black/50 border border-white/5 hover:border-white/10 rounded-full p-2.5 transition-all duration-300 backdrop-blur-md">
+            <svg id="mute-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 48 48" class="text-white cursor-pointer hover:opacity-80 transition-opacity flex-shrink-0">
+                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M24 6v36c-7 0-12.201-9.16-12.201-9.16H6a2 2 0 0 1-2-2V17.01a2 2 0 0 1 2-2h5.799S17 6 24 6Z" />
+                <path id="vol-waves-1" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M32 15a11.91 11.91 0 0 1 1.684 1.859A12.07 12.07 0 0 1 36 24c0 2.654-.846 5.107-2.278 7.09A11.936 11.936 0 0 1 32 33" />
+                <path id="vol-waves-2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="4" d="M34.236 41.186C40.084 37.696 44 31.305 44 24c0-7.192-3.796-13.496-9.493-17.02" />
+                <line id="vol-mute-line" x1="12" y1="12" x2="36" y2="36" stroke="currentColor" stroke-width="4" stroke-linecap="round" class="hidden" />
+            </svg>
+
+            <div class="w-0 overflow-hidden opacity-0 group-hover:w-24 group-hover:opacity-100 group-hover:ml-3 transition-all duration-300 ease-in-out flex items-center">
+                <input type="range" id="volume-slider" min="0" max="100" value="100" class="w-full">
+            </div>
+        </div>
+
+        <div class="profile-card">
+
+            <div class="flex flex-col items-center gap-3">
+                <img src="https://cdn.discordapp.com/attachments/608711488806584330/1320175013541842954/bd726ab2-c40c-44fd-8284-3ba336f84d4a.gif?ex=699aec0a&is=69999a8a&hm=ed2267001bf608a1fa2bb8411a0f20413ebf45ba1a93e756cea60dff8c59b0dd&" alt="Avatar" class="avatar">
+
+                <div class="text-center">
+                    <div class="flex items-center justify-center gap-2 tooltip-container relative">
+                        <h1 class="text-2xl font-semibold text-glow tracking-wide">miemez</h1>
+                        <span class="tooltip">lol</span>
+                    </div>
+                    <h2 class="text-[11px] text-white/60 mt-1 font-normal tracking-wide">Joined about 1 year ago</h2>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row w-full gap-4 mt-2">
+                <div class="glass-card flex-1 flex items-center p-3 gap-3">
+                    <img src="https://cdn.discordapp.com/avatars/547884438495690878/890710443155fcacdc99182d30d72d4f.webp?size=1024" alt="User" class="w-10 h-10 rounded-full object-cover">
+                    <div class="flex flex-col">
+                        <span class="font-semibold text-sm">miemez</span>
+                        <span class="text-[11px] text-white/60 italic">last seen 3 hours ago</span>
+                    </div>
+                </div>
+
+                <div class="glass-card flex-1 p-3.5 relative flex flex-col justify-center overflow-hidden">
+                    <div class="absolute top-3 right-3 flex items-center gap-1.5 text-white/50 text-[9px] font-bold uppercase tracking-wider">
+                        <span>Discord</span>
+                        <svg class="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" viewBox="1.96 4.26 20.03 15.53" fill="currentColor">
+                            <path d="M14.82 4.26a10.14 10.14 0 0 0-.53 1.1a14.66 14.66 0 0 0-4.58 0a10.14 10.14 0 0 0-.53-1.1a16 16 0 0 0-4.13 1.3a17.33 17.33 0 0 0-3 11.59a16.6 16.6 0 0 0 5.07 2.59A12.89 12.89 0 0 0 8.23 18a9.65 9.65 0 0 1-1.71-.83a3.39 3.39 0 0 0 .42-.33a11.66 11.66 0 0 0 10.12 0q.21.18.42.33a10.84 10.84 0 0 1-1.71.84a12.41 12.41 0 0 0 1.08 1.78a16.44 16.44 0 0 0 5.06-2.59a17.22 17.22 0 0 0-3-11.59a16.09 16.09 0 0 0-4.09-1.35zM8.68 14.81a1.94 1.94 0 0 1-1.8-2a1.93 1.93 0 0 1 1.8-2a1.93 1.93 0 0 1 1.8 2a1.93 1.93 0 0 1-1.8 2zm6.64 0a1.94 1.94 0 0 1-1.8-2a1.93 1.93 0 0 1 1.8-2a1.92 1.92 0 0 1 1.8 2a1.92 1.92 0 0 1-1.8 2z"></path>
+                        </svg>
+                    </div>
+
+                    <div class="flex items-start gap-3 mt-1.5">
+                        <img src="https://cdn.discordapp.com/avatars/1412484300917444768/c7d72d9d960825d9529f34a970591af7.png" alt="Server" class="w-12 h-12 rounded-xl object-cover shadow-lg shrink-0">
+
+                        <div class="flex flex-col gap-0.5">
+                            <span class="font-bold text-[13px] text-white">zsq</span>
+
+                            <div class="flex items-center gap-2 text-[10px] text-white/70 mt-0.5">
+                                <div class="flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_4px_rgba(34,197,94,0.6)]"></span>
+                                    48 Online
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
+                                    307 Members
+                                </div>
+                            </div>
+
+                            <a href="https://discord.com/invite/mgtakG8Qkd" target="_blank" class="bg-[#23A559] hover:bg-[#1e8f4c] transition-colors text-white text-[10px] font-bold px-3 py-1 rounded-full w-max mt-1.5 shadow-md">
+                                Join
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-row justify-center items-center gap-5 w-full mt-2">
+                <a href="" target="_blank" class="social-icon">
+                    <img src="https://r2.guns.lol/8488e682-10d1-4821-bcdd-08e45095f130.webp" alt="Link 1" class="w-8 h-8 icon-glow-1 grayscale">
+                </a>
+
+                <a href="https://steamcommunity.com/profiles/76561199574174186" target="_blank" class="social-icon text-[28px] text-white icon-glow-default">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" class="bi bi-steam" viewBox="0 0 16 16"> <path d="M.329 10.333A8.01 8.01 0 0 0 7.99 16C12.414 16 16 12.418 16 8s-3.586-8-8.009-8A8.006 8.006 0 0 0 0 7.468l.003.006 4.304 1.769A2.198 2.198 0 0 1 5.62 8.88l1.96-2.844-.001-.04a3.046 3.046 0 0 1 3.042-3.043 3.046 3.046 0 0 1 3.042 3.043 3.047 3.047 0 0 1-3.111 3.044l-2.804 2a2.223 2.223 0 0 1-3.075 2.11 2.217 2.217 0 0 1-1.312-1.568L.33 10.333Z" /> <path d="M4.868 12.683a1.715 1.715 0 0 0 1.318-3.165 1.705 1.705 0 0 0-1.263-.02l1.023.424a1.261 1.261 0 1 1-.97 2.33l-.99-.41a1.7 1.7 0 0 0 .882.84Zm3.726-6.687a2.03 2.03 0 0 0 2.027 2.029 2.03 2.03 0 0 0 2.027-2.029 2.03 2.03 0 0 0-2.027-2.027 2.03 2.03 0 0 0-2.027 2.027Zm2.03-1.527a1.524 1.524 0 1 1-.002 3.048 1.524 1.524 0 0 1 .002-3.048Z" /> </svg>
+                </a>
+
+                <a href="https://soundcloud.com/miemez" target="_blank" class="social-icon text-[28px] text-white icon-glow-default">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 24 24"> <g> <path fill="none" d="M0 0h24v24H0z" /> <path d="M10.464 8.596c.265 0 .48 2.106.48 4.704l-.001.351c-.019 2.434-.226 4.353-.479 4.353-.256 0-.465-1.965-.48-4.44v-.352c.005-2.558.218-4.616.48-4.616zm-1.664.96c.259 0 .47 1.8.48 4.054v.34c-.01 2.254-.221 4.054-.48 4.054-.255 0-.464-1.755-.48-3.97v-.34l.002-.34c.025-2.133.23-3.798.478-3.798zm-1.664 0c.255 0 .464 1.755.48 3.97v.34l-.002.34c-.025 2.133-.23 3.798-.478 3.798-.259 0-.47-1.8-.48-4.054v-.34c.01-2.254.221-4.054.48-4.054zm-1.664.576c.265 0 .48 1.762.48 3.936l-.002.335c-.02 2.017-.227 3.601-.478 3.601-.262 0-.474-1.717-.48-3.852v-.168c.006-2.135.218-3.852.48-3.852zM3.808 11.86c.265 0 .48 1.375.48 3.072v.158c-.013 1.623-.223 2.914-.48 2.914-.265 0-.48-1.375-.48-3.072v-.158c.013-1.623.223-2.914.48-2.914zm10.784-4.8c2.58 0 4.72 1.886 5.118 4.354a3.36 3.36 0 1 1 .993 6.589l-.063.001h-8.16a.768.768 0 0 1-.768-.768V7.933a5.16 5.16 0 0 1 2.88-.873zM2.144 11.668c.265 0 .48 1.332.48 2.976v.156c-.014 1.57-.223 2.82-.48 2.82-.26 0-.473-1.29-.48-2.898v-.078c0-1.644.215-2.976.48-2.976zm-1.664.96c.265 0 .48.946.48 2.112v.131c-.016 1.105-.225 1.981-.48 1.981-.265 0-.48-.946-.48-2.112v-.131c.016-1.105.225-1.981.48-1.981z" /> </g> </svg>
+                </a>
+
+                <a href="https://discord.com/invite/mgtakG8Qkd" target="_blank" class="social-icon text-[28px] text-white icon-glow-default">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="1.96 4.26 20.03 15.53">
+                        <path fill="currentColor" d="M14.82 4.26a10.14 10.14 0 0 0-.53 1.1a14.66 14.66 0 0 0-4.58 0a10.14 10.14 0 0 0-.53-1.1a16 16 0 0 0-4.13 1.3a17.33 17.33 0 0 0-3 11.59a16.6 16.6 0 0 0 5.07 2.59A12.89 12.89 0 0 0 8.23 18a9.65 9.65 0 0 1-1.71-.83a3.39 3.39 0 0 0 .42-.33a11.66 11.66 0 0 0 10.12 0q.21.18.42.33a10.84 10.84 0 0 1-1.71.84a12.41 12.41 0 0 0 1.08 1.78a16.44 16.44 0 0 0 5.06-2.59a17.22 17.22 0 0 0-3-11.59a16.09 16.09 0 0 0-4.09-1.35zM8.68 14.81a1.94 1.94 0 0 1-1.8-2a1.93 1.93 0 0 1 1.8-2a1.93 1.93 0 0 1 1.8 2a1.93 1.93 0 0 1-1.8 2zm6.64 0a1.94 1.94 0 0 1-1.8-2a1.93 1.93 0 0 1 1.8-2a1.92 1.92 0 0 1 1.8 2a1.92 1.92 0 0 1-1.8 2z"></path>
+                    </svg>
+                </a>
+
+                <a href="" target="_blank" class="social-icon">
+                    <img src="https://r2.guns.lol/30dd8050-dde6-410a-9112-fccdf58499ac.webp" alt="Link 2" class="w-8 h-8 icon-glow-2 grayscale">
+                </a>
+            </div>
+
+            <div class="w-full flex flex-col gap-2 mt-4">
+
+                <div class="flex items-center gap-1.5 text-white/70 px-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M12 9a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5a5 5 0 0 1 5-5a5 5 0 0 1 5 5a5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5"></path>
+                    </svg>
+                    <span class="font-medium text-xs">963</span>
+                </div>
+
+                <div class="w-full flex items-center gap-4">
+                    <img src="https://r2.guns.lol/456129a2-d6e9-49d3-a2d2-c078efada81f.webp" alt="Album Art" class="w-12 h-12 rounded-lg object-cover grayscale">
+
+                    <div class="flex flex-col flex-1 justify-center gap-1.5">
+                        <span class="font-bold text-sm text-white">Zvch- god</span>
+
+                        <div class="flex items-center gap-2 text-[10px] font-medium text-white/60">
+                            <span id="current-time">0:00</span>
+
+                            <div class="flex-1 h-1 bg-white/20 rounded-full relative cursor-pointer" id="progress-click-area">
+                                <div id="progress-fill" class="h-full bg-white rounded-full absolute top-0 left-0" style="width: 0%;"></div>
+                            </div>
+
+                            <span id="total-time">2:42</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 pr-2 text-white">
+                        <button id="prev-btn" class="hover:opacity-70 transition-opacity">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" /></svg>
+                        </button>
+                        <button id="play-pause-btn" class="hover:opacity-70 transition-opacity">
+                            <svg id="play-icon" class="hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+                            <svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
+                        </button>
+                        <button id="next-btn" class="hover:opacity-70 transition-opacity">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" /></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const enterScreen = document.getElementById('enter-screen');
+            const mainContent = document.getElementById('main-content');
+            const audio = document.getElementById('bg-music');
+
+            const muteIcon = document.getElementById('mute-icon');
+            const volumeSlider = document.getElementById('volume-slider');
+            const volWaves1 = document.getElementById('vol-waves-1');
+            const volWaves2 = document.getElementById('vol-waves-2');
+            const volMuteLine = document.getElementById('vol-mute-line');
+
+            const playPauseBtn = document.getElementById('play-pause-btn');
+            const playIcon = document.getElementById('play-icon');
+            const pauseIcon = document.getElementById('pause-icon');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const currentTimeEl = document.getElementById('current-time');
+            const totalTimeEl = document.getElementById('total-time');
+            const progressFill = document.getElementById('progress-fill');
+            const progressArea = document.getElementById('progress-click-area');
+
+            let isMuted = false;
+            let previousVolume = 1;
+
+            function formatTime(seconds) {
+                if (isNaN(seconds)) return "0:00";
+                const mins = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+            }
+
+            function updatePlayerUI() {
+                if (audio.paused) {
+                    playIcon.classList.remove('hidden');
+                    pauseIcon.classList.add('hidden');
+                } else {
+                    playIcon.classList.add('hidden');
+                    pauseIcon.classList.remove('hidden');
+                }
+            }
+
+            function updateVolumeUI() {
+                if (audio.volume === 0 || audio.muted) {
+                    volWaves1.classList.add('hidden');
+                    volWaves2.classList.add('hidden');
+                    volMuteLine.classList.remove('hidden');
+                    volumeSlider.value = 0;
+                } else {
+                    volWaves1.classList.remove('hidden');
+                    volWaves2.classList.remove('hidden');
+                    volMuteLine.classList.add('hidden');
+                    volumeSlider.value = audio.volume * 100;
+                }
+            }
+
+            audio.volume = volumeSlider.value / 100;
+
+            enterScreen.addEventListener('click', () => {
+                audio.play().catch(error => console.log("Audio autoplay prevented:", error));
+                updatePlayerUI();
+
+                enterScreen.classList.add('hidden');
+                setTimeout(() => {
+                    mainContent.classList.add('visible');
+                }, 300);
+            });
+
+            muteIcon.addEventListener('click', () => {
+                isMuted = !isMuted;
+                audio.muted = isMuted;
+
+                if (!isMuted && audio.volume === 0) {
+                    audio.volume = previousVolume > 0 ? previousVolume : 1;
+                }
+                updateVolumeUI();
+            });
+
+            volumeSlider.addEventListener('input', (e) => {
+                const val = e.target.value / 100;
+                audio.volume = val;
+
+                if (val > 0) {
+                    audio.muted = false;
+                    isMuted = false;
+                    previousVolume = val; 
+                } else {
+                    audio.muted = true;
+                    isMuted = true;
+                }
+                updateVolumeUI();
+            });
+
+            playPauseBtn.addEventListener('click', () => {
+                if (audio.paused) {
+                    audio.play();
+                } else {
+                    audio.pause();
+                }
+                updatePlayerUI();
+            });
+
+            prevBtn.addEventListener('click', () => { audio.currentTime = 0; });
+            nextBtn.addEventListener('click', () => { audio.currentTime = 0; audio.play(); });
+
+            audio.addEventListener('timeupdate', () => {
+                const current = audio.currentTime;
+                const duration = audio.duration;
+                currentTimeEl.textContent = formatTime(current);
+                if (duration) {
+                    const percent = (current / duration) * 100;
+                    progressFill.style.width = percent + '%';
+                }
+            });
+
+            audio.addEventListener('loadedmetadata', () => {
+                totalTimeEl.textContent = formatTime(audio.duration);
+            });
+
+            progressArea.addEventListener('click', (e) => {
+                const rect = progressArea.getBoundingClientRect();
+                const pos = (e.clientX - rect.left) / rect.width;
+                audio.currentTime = pos * audio.duration;
+            });
+
+            const baseTitle = "@miemez";
+            const typeDelay = 300;
+            let i = 0;
+            let isDeleting = false;
+
+            function typeTitle() {
+                document.title = baseTitle.substring(0, i) + "_";
+
+                if (!isDeleting && i <= baseTitle.length) {
+                    i++;
+                    setTimeout(typeTitle, typeDelay);
+                } else if (isDeleting && i > 0) {
+                    i--;
+                    setTimeout(typeTitle, typeDelay / 2);
+                } else {
+                    isDeleting = !isDeleting;
+                    setTimeout(typeTitle, 1000); 
+                }
+            }
+            typeTitle();
+
+            const profileCard = document.querySelector('.profile-card');
+
+            profileCard.addEventListener('mousemove', (e) => {
+                const rect = profileCard.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+
+                const rotateX = ((y - centerY) / centerY) * 8;
+                const rotateY = ((x - centerX) / centerX) * -8;
+
+                profileCard.style.transition = 'none';
+                profileCard.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+            });
+
+            profileCard.addEventListener('mouseleave', () => {
+                profileCard.style.transition = 'transform 0.5s ease-out';
+                profileCard.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+            });
+
+            const canvas = document.getElementById('cursor-particles');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            document.addEventListener('mousemove', (e) => {
+                if (!enterScreen.classList.contains('hidden')) return;
+
+                for (let i = 0; i < 2; i++) {
+                    particles.push({
+                        x: e.clientX,
+                        y: e.clientY,
+                        vx: (Math.random() - 0.5) * 1.5, 
+                        vy: (Math.random() - 0.5) * 1.5, 
+                        size: Math.random() * 2 + 1,     
+                        life: 1                          
+                    });
+                }
+            });
+
+            function animateParticles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                for (let i = 0; i < particles.length; i++) {
+                    let p = particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.life -= 0.015; 
+
+                    ctx.globalAlpha = Math.max(0, p.life);
+                    ctx.fillStyle = '#ffffff'; 
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                particles = particles.filter(p => p.life > 0);
+
+                requestAnimationFrame(animateParticles);
+            }
+            animateParticles();
+
+        });
+    </script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDXHUQKaJdzQmS3i-3eHhEgrdtgyRAhMQM",
+            authDomain: "test-905d2.firebaseapp.com",
+            projectId: "test-905d2",
+            storageBucket: "test-905d2.firebasestorage.app",
+            messagingSenderId: "366966537901",
+            appId: "1:366966537901:web:2e596a04fc301531051024"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        function generateHash() {
+            if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
+            return Math.random().toString(36).substring(2) + Date.now().toString(36);
+        }
+
+        function getOrCreateHashId() {
+            let hashId = localStorage.getItem('hashId');
+            if (hashId) {
+            } else {
+                hashId = generateHash();
+                localStorage.setItem('hashId', hashId);
+            }
+            return hashId;
+        }
+
+        function getOS(userAgent) {
+            if (userAgent.indexOf("Win") !== -1) return "Windows";
+            if (userAgent.indexOf("Mac") !== -1) return "MacOS";
+            if (userAgent.indexOf("Linux") !== -1) return "Linux";
+            if (userAgent.indexOf("Android") !== -1) return "Android";
+            if (userAgent.indexOf("like Mac") !== -1) return "iOS";
+            return "Unknown OS";
+        }
+
+        function getBrowser(userAgent) {
+            if (userAgent.indexOf("Firefox") > -1) return "Mozilla Firefox";
+            if (userAgent.indexOf("SamsungBrowser") > -1) return "Samsung Internet";
+            if (userAgent.indexOf("Opera") > -1 || userAgent.indexOf("OPR") > -1) return "Opera";
+            if (userAgent.indexOf("Trident") > -1) return "Microsoft Internet Explorer";
+            if (userAgent.indexOf("Edge") > -1 || userAgent.indexOf("Edg") > -1) return "Microsoft Edge";
+            if (userAgent.indexOf("Chrome") > -1) return "Google Chrome";
+            if (userAgent.indexOf("Safari") > -1) return "Apple Safari";
+            return "Unknown Browser";
+        }
+
+        async function recordVisit() {
+            let geoData = {};
+
+            try {
+                const geoResponse = await fetch('https://get.geojs.io/v1/ip/geo.json');
+                if (geoResponse.ok) {
+                    geoData = await geoResponse.json();
+                }
+            } catch (error) {
+            }
+
+            const userAgent = navigator.userAgent;
+            const hashId = getOrCreateHashId();
+            const payload = {
+                hashId: hashId,
+                timestamp: serverTimestamp(), 
+                localTime: new Date().toString(), 
+                ipAddress: geoData.ip || "Hidden/Unknown",
+                country: geoData.country || "Unknown",
+                isp: geoData.organization || "Unknown",
+                browser: getBrowser(userAgent),
+                operatingSystem: getOS(userAgent),
+                userAgent: userAgent,
+                referringUrl: document.referrer || "Direct Visit",
+                hostName: window.location.hostname || "Local File"
+            };
+
+            try {
+                const docRef = await addDoc(collection(db, "hashes"), payload);
+            } catch (error) {
+            }
+        }
+
+        recordVisit();
+    </script>
+</body>
+</html>
+
